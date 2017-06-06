@@ -125,21 +125,16 @@ public class MediaTask implements IMediaTask<MediaEntity> {
                     String date = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DATE_TAKEN));
                     String duration = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DURATION));
                     String modifyDate = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DATE_MODIFIED));
-                    if (duration.compareToIgnoreCase("0")<0){
-                        i++;
+                    if (!size.equals("0") && size.compareToIgnoreCase("5120000")<0){
+                        MediaEntity video = new MediaEntity.Builder(id, data)
+                                .setTitle(title)
+                                .setDuration(duration)
+                                .setSize(size)
+                                .setDataTaken(date)
+                                .setModifyDate(modifyDate)
+                                .setMimeType(type).build();
+                        videoMedias.add(video);
                     }
-                    if (Integer.getInteger(size,0)>0 && Integer.getInteger(size,0) < 5*1024*1000){
-                        i++;
-                    }
-                    MediaEntity video = new MediaEntity.Builder(id, data)
-                            .setTitle(title)
-                            .setDuration(duration)
-                            .setSize(size)
-                            .setDataTaken(date)
-                            .setModifyDate(modifyDate)
-                            .setMimeType(type).build();
-                    videoMedias.add(video);
-
                 } while (!cursor.isLast() && cursor.moveToNext());
 //                postMedias(callback, videoMedias, count);
                 results.addAll(videoMedias);

@@ -141,7 +141,16 @@ public class MediaItemLayout extends FrameLayout {
 //            setCover(videoMedia.getPath());
         } else if (media instanceof MediaEntity){
             MediaEntity mediaEntity = (MediaEntity)media;
-            if (((MediaEntity) media).getMediaType() == MediaEntity.MEDIA_TYPE.VIDEO){
+            if (mediaEntity.getMediaType() == MediaEntity.MEDIA_TYPE.VIDEO){
+                VideoMedia videoMedia = new VideoMedia.Builder(mediaEntity.getId(),mediaEntity.getPath())
+                        .setTitle(mediaEntity.mTitle)
+                        .setMimeType(mediaEntity.mMimeType)
+                        .setSize(String.valueOf(mediaEntity.getSize()))
+                        .setDataTaken(mediaEntity.mDateTaken)
+                        .setDuration(mediaEntity.mDuration)
+                        .build();
+                showVideoItem(videoMedia);
+            }else {
                 ImageMedia imageMedia = new ImageMedia.Builder(mediaEntity.getId(),mediaEntity.getPath())
                         .setHeight(mediaEntity.mHeight)
                         .setMimeType(mediaEntity.mMimeType)
@@ -151,15 +160,6 @@ public class MediaItemLayout extends FrameLayout {
                         .setWidth(mediaEntity.mWidth)
                         .build();
                 showImageItem(imageMedia);
-            }else {
-                VideoMedia videoMedia = new VideoMedia.Builder(mediaEntity.getId(),mediaEntity.getPath())
-                        .setTitle(mediaEntity.mTitle)
-                        .setMimeType(mediaEntity.mMimeType)
-                        .setSize(mediaEntity.getSizeByUnit())
-                        .setDataTaken(mediaEntity.mDateTaken)
-                        .setDuration(mediaEntity.mDuration)
-                        .build();
-                showVideoItem(videoMedia);
             }
         }
     }

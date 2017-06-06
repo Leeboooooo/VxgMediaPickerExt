@@ -114,9 +114,9 @@ public class MediaEntity extends BaseMedia {
                 return MEDIA_TYPE.GIF;
             } else if ("image/png".equals(mMimeType)) {
                 return MEDIA_TYPE.PNG;
-            } else if ("image/jpg".equals(mMimeType)){
+            } else if ("image/jpeg".equals(mMimeType)){
                 return MEDIA_TYPE.JPG;
-            } else {
+            } else if ("video/mp4".equals(mMimeType)){
                 return MEDIA_TYPE.VIDEO;
             }
         }
