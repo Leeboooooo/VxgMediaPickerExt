@@ -19,6 +19,7 @@ package com.bilibili.boxing.model.entity.impl;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
 import com.bilibili.boxing.model.entity.BaseMedia;
 
@@ -113,6 +114,21 @@ public class VideoMedia extends BaseMedia {
 
     public String getMimeType() {
         return mMimeType;
+    }
+
+    public MediaEntity.MEDIA_TYPE getMediaType() {
+        if (!TextUtils.isEmpty(mMimeType)) {
+            if ("image/gif".equals(mMimeType)) {
+                return MediaEntity.MEDIA_TYPE.GIF;
+            } else if ("image/png".equals(mMimeType)) {
+                return MediaEntity.MEDIA_TYPE.PNG;
+            } else if ("image/jpeg".equals(mMimeType)){
+                return MediaEntity.MEDIA_TYPE.JPG;
+            } else if ("video/mp4".equals(mMimeType)){
+                return MediaEntity.MEDIA_TYPE.VIDEO;
+            }
+        }
+        return MediaEntity.MEDIA_TYPE.PNG;
     }
 
     public static class Builder {

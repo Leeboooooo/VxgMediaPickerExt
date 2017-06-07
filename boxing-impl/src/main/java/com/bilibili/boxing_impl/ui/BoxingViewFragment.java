@@ -45,6 +45,7 @@ import com.bilibili.boxing.model.config.BoxingConfig;
 import com.bilibili.boxing.model.entity.AlbumEntity;
 import com.bilibili.boxing.model.entity.BaseMedia;
 import com.bilibili.boxing.model.entity.impl.ImageMedia;
+import com.bilibili.boxing.model.entity.impl.MediaEntity;
 import com.bilibili.boxing.utils.BoxingFileHelper;
 import com.bilibili.boxing_impl.R;
 import com.bilibili.boxing_impl.WindowManagerHelper;
@@ -83,6 +84,7 @@ public class BoxingViewFragment extends AbsBoxingViewFragment implements View.On
     private TextView mTitleTxt;
     private PopupWindow mAlbumPopWindow;
     private ProgressBar mLoadingView;
+    private OnMediaCheckedListener onMediaCheckedListener;
 
     private int mMaxCount;
 
@@ -162,7 +164,8 @@ public class BoxingViewFragment extends AbsBoxingViewFragment implements View.On
         mRecycleView.setLayoutManager(gridLayoutManager);
         mRecycleView.addItemDecoration(new SpacesItemDecoration(getResources().getDimensionPixelOffset(R.dimen.boxing_media_margin), GRID_COUNT));
         mMediaAdapter.setOnCameraClickListener(new OnCameraClickListener());
-        mMediaAdapter.setOnCheckedListener(new OnMediaCheckedListener());
+        onMediaCheckedListener = new OnMediaCheckedListener();
+        mMediaAdapter.setOnCheckedListener(onMediaCheckedListener);
         mMediaAdapter.setOnMediaClickListener(new OnMediaClickListener());
         mRecycleView.setAdapter(mMediaAdapter);
         mRecycleView.addOnScrollListener(new ScrollListener());
@@ -418,7 +421,7 @@ public class BoxingViewFragment extends AbsBoxingViewFragment implements View.On
             } else if (mode == BoxingConfig.Mode.VIDEO) {
                 videoClick(media);
             }else if (mode == BoxingConfig.Mode.MEDIA){
-                mediaClick(pos);
+                mediaClick(v,media);
             }
         }
 
@@ -452,12 +455,8 @@ public class BoxingViewFragment extends AbsBoxingViewFragment implements View.On
             }
         }
 
-        private void mediaClick(int pos){
-            if (!mIsPreview) {
-                AlbumEntity albumMedia = mAlbumWindowAdapter.getCurrentAlbum();
-                String albumId = albumMedia != null ? albumMedia.mBucketId : AlbumEntity.DEFAULT_NAME;
-                mIsPreview = true;
-            }
+        private void mediaClick(View view,BaseMedia media){
+            onMediaCheckedListener.onChecked(view,media);
         }
     }
 
@@ -477,32 +476,57 @@ public class BoxingViewFragment extends AbsBoxingViewFragment implements View.On
 
         @Override
         public void onChecked(View view, BaseMedia iMedia) {
-            if (!(iMedia instanceof ImageMedia)) {
+            if (!((iMedia instanceof ImageMedia)|| iMedia instanceof MediaEntity)) {
                 return;
             }
-            ImageMedia photoMedia = (ImageMedia) iMedia;
-            boolean isSelected = !photoMedia.isSelected();
+            boolean isSelected = false;
             MediaItemLayout layout = (MediaItemLayout) view;
             List<BaseMedia> selectedMedias = mMediaAdapter.getSelectedMedias();
-            if (isSelected) {
-                if (selectedMedias.size() >= mMaxCount) {
-                    String warning = getString(R.string.boxing_too_many_picture_fmt, mMaxCount);
-                    Toast.makeText(getActivity(), warning, Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (!selectedMedias.contains(photoMedia)) {
-                    if (photoMedia.isGifOverSize()) {
-                        Toast.makeText(getActivity(), R.string.boxing_gif_too_big, Toast.LENGTH_SHORT).show();
+            if (iMedia instanceof ImageMedia) {
+                ImageMedia photoMedia = (ImageMedia) iMedia;
+                isSelected = !photoMedia.isSelected();
+                photoMedia.setSelected(isSelected);
+                if (isSelected) {
+                    if (selectedMedias.size() >= mMaxCount) {
+                        String warning = getString(R.string.boxing_too_many_picture_fmt, mMaxCount);
+                        Toast.makeText(getActivity(), warning, Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    selectedMedias.add(photoMedia);
+                    if (!selectedMedias.contains(photoMedia)) {
+                        if (photoMedia.isGifOverSize()) {
+                            Toast.makeText(getActivity(), R.string.boxing_gif_too_big, Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        selectedMedias.add(photoMedia);
+                    }
+                } else {
+                    if (selectedMedias.size() >= 1 && selectedMedias.contains(photoMedia)) {
+                        selectedMedias.remove(photoMedia);
+                    }
                 }
-            } else {
-                if (selectedMedias.size() >= 1 && selectedMedias.contains(photoMedia)) {
-                    selectedMedias.remove(photoMedia);
+            }else{
+                MediaEntity entity = (MediaEntity)iMedia;
+                isSelected = !entity.mIsSelected;
+                entity.mIsSelected = isSelected;
+                if (isSelected) {
+                    if (selectedMedias.size() >= mMaxCount) {
+                        String warning = getString(R.string.boxing_too_many_picture_fmt, mMaxCount);
+                        Toast.makeText(getActivity(), warning, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    if (!selectedMedias.contains(entity)) {
+                        if (entity.isGifOverSize()) {
+                            Toast.makeText(getActivity(), R.string.boxing_gif_too_big, Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        selectedMedias.add(entity);
+                    }
+                } else {
+                    if (selectedMedias.size() >= 1 && selectedMedias.contains(entity)) {
+                        selectedMedias.remove(entity);
+                    }
                 }
             }
-            photoMedia.setSelected(isSelected);
             layout.setChecked(isSelected);
             updateMultiPickerLayoutState(selectedMedias);
         }

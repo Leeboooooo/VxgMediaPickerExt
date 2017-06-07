@@ -37,6 +37,7 @@ import com.bilibili.boxing.Boxing;
 import com.bilibili.boxing.model.BoxingManager;
 import com.bilibili.boxing.model.entity.BaseMedia;
 import com.bilibili.boxing.model.entity.impl.ImageMedia;
+import com.bilibili.boxing.model.entity.impl.MediaEntity;
 import com.bilibili.boxing.model.task.IMediaTask;
 import com.bilibili.boxing_impl.BoxingResHelper;
 import com.bilibili.boxing_impl.R;
@@ -70,6 +71,7 @@ public class BoxingViewActivity extends AbsBoxingViewActivity {
     private Toolbar mToolbar;
     private ImagesAdapter mAdapter;
     private ImageMedia mCurrentImageItem;
+    private MediaEntity mCurrentMediaItem;
     private Button mOkBtn;
     private ArrayList<BaseMedia> mImages;
     private ArrayList<BaseMedia> mSelectedImages;
@@ -215,7 +217,12 @@ public class BoxingViewActivity extends AbsBoxingViewActivity {
     @Override
     public void startLoading() {
         if (!mNeedLoading) {
-            mCurrentImageItem = (ImageMedia) mSelectedImages.get(mStartPos);
+            BaseMedia media = mSelectedImages.get(mStartPos);
+            if (media instanceof ImageMedia){
+                mCurrentImageItem = (ImageMedia) media;
+            }else if(media instanceof MediaEntity){
+                mCurrentMediaItem = (MediaEntity)media;
+            }
             if (mStartPos > 0 && mStartPos < mSelectedImages.size()) {
                 mGallery.setCurrentItem(mStartPos, false);
             }

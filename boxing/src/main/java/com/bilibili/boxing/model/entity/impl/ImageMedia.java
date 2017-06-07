@@ -127,7 +127,7 @@ public class ImageMedia extends BaseMedia implements Parcelable {
         return mImageType;
     }
 
-    protected IMAGE_TYPE getImageTypeByMime(String mimeType) {
+    public IMAGE_TYPE getImageTypeByMime(String mimeType) {
         if (!TextUtils.isEmpty(mimeType)) {
             if ("image/gif".equals(mimeType)) {
                 return IMAGE_TYPE.GIF;

@@ -14,6 +14,8 @@ import java.util.Locale;
 
 public class MediaEntity extends BaseMedia {
     private static final long MB = 1024 * 1024;
+    private static final long MAX_GIF_SIZE = 1024 * 1024L;
+    private static final long MAX_IMAGE_SIZE = 1024 * 1024L;
 
     public String mTitle;
     public String mDuration;
@@ -121,6 +123,14 @@ public class MediaEntity extends BaseMedia {
             }
         }
         return MEDIA_TYPE.PNG;
+    }
+
+    public boolean isGif() {
+        return mImageType == MEDIA_TYPE.GIF;
+    }
+
+    public boolean isGifOverSize() {
+        return isGif() && getSize() > MAX_GIF_SIZE;
     }
 
     public MediaEntity(Builder builder) {

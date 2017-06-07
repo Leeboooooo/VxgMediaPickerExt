@@ -173,6 +173,7 @@ public class MediaTask implements IMediaTask<MediaEntity> {
                         width = cursor.getInt(cursor.getColumnIndex(MediaStore.Images.Media.WIDTH));
                         height = cursor.getInt(cursor.getColumnIndex(MediaStore.Images.Media.HEIGHT));
                     }
+                    if (size.equals("0")) continue;
                     MediaEntity imageItem = new MediaEntity
                             .Builder(id, picPath)
                             .setThumbnailPath(mThumbnailMap.get(id))

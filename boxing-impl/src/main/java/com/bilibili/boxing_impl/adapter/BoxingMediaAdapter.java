@@ -29,6 +29,8 @@ import com.bilibili.boxing.model.BoxingManager;
 import com.bilibili.boxing.model.config.BoxingConfig;
 import com.bilibili.boxing.model.entity.BaseMedia;
 import com.bilibili.boxing.model.entity.impl.ImageMedia;
+import com.bilibili.boxing.model.entity.impl.MediaEntity;
+import com.bilibili.boxing.utils.MediaUtils;
 import com.bilibili.boxing_impl.BoxingResHelper;
 import com.bilibili.boxing_impl.R;
 import com.bilibili.boxing_impl.view.MediaItemLayout;
@@ -65,7 +67,7 @@ public class BoxingMediaAdapter extends RecyclerView.Adapter {
         this.mSelectedMedias = new ArrayList<>();
         this.mMediaConfig = BoxingManager.getInstance().getBoxingConfig();
         this.mOffset = mMediaConfig.isNeedCamera() ? 1 : 0;
-        this.mMultiImageMode = mMediaConfig.getMode() == BoxingConfig.Mode.MULTI_IMG;
+        this.mMultiImageMode = (mMediaConfig.getMode() == BoxingConfig.Mode.MULTI_IMG || mMediaConfig.getMode() == BoxingConfig.Mode.MEDIA);
         this.mOnCheckListener = new OnCheckListener();
         this.mDefaultRes = mMediaConfig.getMediaPlaceHolderRes();
     }
@@ -104,8 +106,20 @@ public class BoxingMediaAdapter extends RecyclerView.Adapter {
             vh.mItemLayout.setTag(R.id.media_item_check, pos);
             vh.mItemLayout.setMedia(media);
             vh.mItemChecked.setVisibility(mMultiImageMode ? View.VISIBLE : View.GONE);
-            if (mMultiImageMode && media instanceof ImageMedia) {
-                vh.mItemLayout.setChecked(((ImageMedia) media).isSelected());
+            if (mMultiImageMode) {
+                boolean isChecked = false;
+                if (media instanceof ImageMedia) {
+                    isChecked = ((ImageMedia) media).isSelected();
+                }else if (media instanceof MediaEntity){
+                    MediaEntity mediaEntity = ((MediaEntity) media);
+                    isChecked = mediaEntity.mIsSelected;
+                    if (MediaUtils.getMediaTypeFormMimeType(mediaEntity.mMimeType)
+                            == MediaUtils.MEDIA_TYPE.VIDEO){
+                        vh.mItemChecked.setVisibility(View.GONE);
+                        return;
+                    }
+                }
+                vh.mItemLayout.setChecked(isChecked);
                 vh.mItemChecked.setTag(R.id.media_layout, vh.mItemLayout);
                 vh.mItemChecked.setTag(media);
                 vh.mItemChecked.setOnClickListener(mOnCheckListener);
@@ -129,6 +143,10 @@ public class BoxingMediaAdapter extends RecyclerView.Adapter {
 
     public void setOnCheckedListener(OnMediaCheckedListener onCheckedListener) {
         mOnCheckedListener = onCheckedListener;
+    }
+
+    public OnMediaCheckedListener getOnCheckedListener() {
+        return mOnCheckedListener;
     }
 
     public void setOnMediaClickListener(View.OnClickListener onMediaClickListener) {
@@ -193,7 +211,8 @@ public class BoxingMediaAdapter extends RecyclerView.Adapter {
         public void onClick(View v) {
             MediaItemLayout itemLayout = (MediaItemLayout) v.getTag(R.id.media_layout);
             BaseMedia media = (BaseMedia) v.getTag();
-            if (mMediaConfig.getMode() == BoxingConfig.Mode.MULTI_IMG) {
+            if (mMediaConfig.getMode() == BoxingConfig.Mode.MULTI_IMG
+                    || mMediaConfig.getMode() == BoxingConfig.Mode.MEDIA) {
                 if (mOnCheckedListener != null) {
                     mOnCheckedListener.onChecked(itemLayout, media);
                 }

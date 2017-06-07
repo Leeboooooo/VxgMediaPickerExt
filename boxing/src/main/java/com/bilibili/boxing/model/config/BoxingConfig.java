@@ -157,7 +157,7 @@ public class BoxingConfig implements Parcelable {
     }
 
     public boolean isMultiImageMode() {
-        return mMode == Mode.MULTI_IMG;
+        return (mMode == Mode.MULTI_IMG) ||(mMode ==  Mode.MEDIA);
     }
 
     public boolean isSingleImageMode() {

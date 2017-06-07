@@ -132,16 +132,10 @@ public class MediaItemLayout extends FrameLayout {
         } else if (media instanceof VideoMedia) {
             VideoMedia videoMedia = (VideoMedia) media;
             showVideoItem(videoMedia);
-//            mVideoLayout.setVisibility(VISIBLE);
-//            VideoMedia videoMedia = (VideoMedia) media;
-//            TextView durationTxt = ((TextView) mVideoLayout.findViewById(R.id.video_duration_txt));
-//            durationTxt.setText(videoMedia.getDuration());
-//            durationTxt.setCompoundDrawablesWithIntrinsicBounds(BoxingManager.getInstance().getBoxingConfig().getVideoDurationRes(), 0, 0, 0);
-//            ((TextView) mVideoLayout.findViewById(R.id.video_size_txt)).setText(videoMedia.getSizeByUnit());
-//            setCover(videoMedia.getPath());
         } else if (media instanceof MediaEntity){
             MediaEntity mediaEntity = (MediaEntity)media;
-            if (mediaEntity.getMediaType() == MediaEntity.MEDIA_TYPE.VIDEO){
+            if (mediaEntity.getMediaType() == MediaEntity.MEDIA_TYPE.VIDEO
+                    || mediaEntity.getMediaType() == MediaEntity.MEDIA_TYPE.GIF){
                 VideoMedia videoMedia = new VideoMedia.Builder(mediaEntity.getId(),mediaEntity.getPath())
                         .setTitle(mediaEntity.mTitle)
                         .setMimeType(mediaEntity.mMimeType)
@@ -185,11 +179,17 @@ public class MediaItemLayout extends FrameLayout {
 
     private void showVideoItem(VideoMedia videoMedia){
         mVideoLayout.setVisibility(VISIBLE);
+        String path = videoMedia.getPath();
+        String duration = videoMedia.getDuration();
+        if (videoMedia.getMediaType() == MediaEntity.MEDIA_TYPE.GIF){
+            path = videoMedia.getPath();
+            duration = "GIF";
+        }
         TextView durationTxt = ((TextView) mVideoLayout.findViewById(R.id.video_duration_txt));
-        durationTxt.setText(videoMedia.getDuration());
+        durationTxt.setText(duration);
         durationTxt.setCompoundDrawablesWithIntrinsicBounds(BoxingManager.getInstance().getBoxingConfig().getVideoDurationRes(), 0, 0, 0);
         ((TextView) mVideoLayout.findViewById(R.id.video_size_txt)).setText(videoMedia.getSizeByUnit());
-        setCover(videoMedia.getPath());
+        setCover(path);
     }
 
     private void showImageItem(ImageMedia media){
