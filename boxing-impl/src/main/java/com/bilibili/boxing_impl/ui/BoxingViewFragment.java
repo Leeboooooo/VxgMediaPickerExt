@@ -421,7 +421,16 @@ public class BoxingViewFragment extends AbsBoxingViewFragment implements View.On
             } else if (mode == BoxingConfig.Mode.VIDEO) {
                 videoClick(media);
             }else if (mode == BoxingConfig.Mode.MEDIA){
-                mediaClick(v,media);
+                ArrayList<BaseMedia> medias = (ArrayList<BaseMedia>) mMediaAdapter.getSelectedMedias();
+                if (medias != null && medias.size()>0){
+                    mediaClick(v, media);
+                }else {
+                    if (((MediaEntity) media).getMediaKind() == MediaUtils.MEDIA_TYPE.VIDEO) {
+                        videoClick(media);
+                    } else {
+                        mediaClick(v, media);
+                    }
+                }
             }
         }
 

@@ -171,7 +171,11 @@ public class MediaItemLayout extends FrameLayout {
 
     private void showImageItem(MediaEntity media){
         mVideoLayout.setVisibility(GONE);
-        setCover(media.getThumbnailPath());
+        String path = media.getThumbnailPath();
+        if (path == null || path.isEmpty()){
+            path = media.getPath();
+        }
+        setCover(path);
     }
 
 }

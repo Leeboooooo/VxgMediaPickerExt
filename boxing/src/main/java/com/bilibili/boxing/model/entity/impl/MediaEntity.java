@@ -297,7 +297,12 @@ public class MediaEntity extends BaseMedia implements Parcelable{
     }
 
     public String getDuration() {
-        return mDuration;
+        try {
+            long duration = Long.parseLong(mDuration);
+            return formatTimeWithMin(duration);
+        } catch (NumberFormatException e) {
+            return "0:00";
+        }
     }
 
     public void setDuration(String mDuration) {

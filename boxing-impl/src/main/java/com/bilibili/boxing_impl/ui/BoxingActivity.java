@@ -80,6 +80,10 @@ public class BoxingActivity extends AbsBoxingActivity {
             titleTxt.setText(R.string.boxing_video_title);
             titleTxt.setCompoundDrawables(null, null, null, null);
             return;
+        }else if (config.getMode() == BoxingConfig.Mode.MEDIA){
+            titleTxt.setText(R.string.tittle_all);
+            titleTxt.setCompoundDrawables(null, null, null, null);
+            return;
         }
         mPickerFragment.setTitleTxt(titleTxt);
     }

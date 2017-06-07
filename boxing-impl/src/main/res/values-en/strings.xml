@@ -43,4 +43,5 @@
     <string name="boxing_crop_error">sorry, error occurs when cropping</string>
     <string name="boxing_nothing_found">nothing!</string>
     <string name="boxing_too_many_picture_fmt">You can only select up to %d pictures</string>
+    <string name="tittle_all">ALL</string>
 </resources>
