@@ -1,18 +1,29 @@
 package com.bilibili.boxing.model.entity.impl;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.bilibili.boxing.model.entity.BaseMedia;
+import com.bilibili.boxing.utils.BoxingExecutor;
+import com.bilibili.boxing.utils.BoxingExifHelper;
+import com.bilibili.boxing.utils.CompressTask;
+import com.bilibili.boxing.utils.ImageCompressor;
+import com.bilibili.boxing.utils.MediaUtils.*;
 
+
+import java.io.File;
 import java.util.Locale;
 
 /**
  * Created by mobao.libo on 2017-06-06-0006.
  */
 
-public class MediaEntity extends BaseMedia {
+public class MediaEntity extends BaseMedia implements Parcelable{
     private static final long MB = 1024 * 1024;
     private static final long MAX_GIF_SIZE = 1024 * 1024L;
     private static final long MAX_IMAGE_SIZE = 1024 * 1024L;
@@ -28,10 +39,6 @@ public class MediaEntity extends BaseMedia {
     public int mWidth;
     public MEDIA_TYPE mImageType;
     public String mMimeType;
-
-    public enum MEDIA_TYPE {
-        PNG, JPG, GIF,VIDEO
-    }
 
     protected MediaEntity(Parcel in) {
         super(in);
@@ -62,6 +69,14 @@ public class MediaEntity extends BaseMedia {
     @Override
     public TYPE getType() {
         return TYPE.MEDIA;
+    }
+
+    public boolean compress(ImageCompressor imageCompressor) {
+        return CompressTask.compress(imageCompressor, this, MAX_IMAGE_SIZE);
+    }
+
+    public boolean compress(ImageCompressor imageCompressor, int maxSize) {
+        return CompressTask.compress(imageCompressor, this, maxSize);
     }
 
     public String getSizeByUnit() {
@@ -149,6 +164,31 @@ public class MediaEntity extends BaseMedia {
         this.mModifyData = builder.mModifyData;
     }
 
+    public MediaEntity(@NonNull File file) {
+        this.mId = String.valueOf(System.currentTimeMillis());
+        this.mPath = file.getAbsolutePath();
+        this.mSize = String.valueOf(file.length());
+        this.mIsSelected = true;
+    }
+
+    /**
+     * save image to MediaStore.
+     */
+    public void saveMediaStore(final ContentResolver cr) {
+        BoxingExecutor.getInstance().runWorker(new Runnable() {
+            @Override
+            public void run() {
+                if (cr != null && !TextUtils.isEmpty(getId())) {
+                    ContentValues values = new ContentValues();
+                    values.put(MediaStore.Images.Media.TITLE, getId());
+                    values.put(MediaStore.Images.Media.MIME_TYPE, getMimeType());
+                    values.put(MediaStore.Images.Media.DATA, getPath());
+                    cr.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+                }
+            }
+        });
+    }
+
     public static class Builder {
         private String mModifyData;
         private String mId;
@@ -199,7 +239,7 @@ public class MediaEntity extends BaseMedia {
             return this;
         }
 
-        public MediaEntity.Builder setIsSelected(boolean mIsSelected) {
+        public MediaEntity.Builder setSelected(boolean mIsSelected) {
             this.mIsSelected = mIsSelected;
             return this;
         }
@@ -224,7 +264,111 @@ public class MediaEntity extends BaseMedia {
         }
     }
 
-    public String getmModifyData() {
+
+    public MEDIA_TYPE getMediaKind(){
+        if (!TextUtils.isEmpty(mMimeType)) {
+            if ("image/gif".equals(mMimeType)
+                    ||"image/png".equals(mMimeType)
+                    ||"image/jpeg".equals(mMimeType)
+                    ||"image/jpg".equals(mMimeType)) {
+                return MEDIA_TYPE.PHOTO;
+            }  else if ("video/mp4".equals(mMimeType)){
+                return MEDIA_TYPE.VIDEO;
+            }
+        }
+        return MEDIA_TYPE.PHOTO;
+    }
+
+    public void removeExif() {
+        BoxingExifHelper.removeExif(getPath());
+    }
+
+    public String getModifyData() {
         return mModifyData;
+    }
+
+
+    public String getTitle() {
+        return mTitle;
+    }
+
+    public void setTitle(String mTitle) {
+        this.mTitle = mTitle;
+    }
+
+    public String getDuration() {
+        return mDuration;
+    }
+
+    public void setDuration(String mDuration) {
+        this.mDuration = mDuration;
+    }
+
+    public String getDateTaken() {
+        return mDateTaken;
+    }
+
+    public void setDateTaken(String mDateTaken) {
+        this.mDateTaken = mDateTaken;
+    }
+
+    public void setModifyData(String mModifyData) {
+        this.mModifyData = mModifyData;
+    }
+
+    public boolean isSelected() {
+        return mIsSelected;
+    }
+
+    public void setSelected(boolean mIsSelected) {
+        this.mIsSelected = mIsSelected;
+    }
+
+    public String getThumbnailPath() {
+        return mThumbnailPath;
+    }
+
+    public void setThumbnailPath(String mThumbnailPath) {
+        this.mThumbnailPath = mThumbnailPath;
+    }
+
+    public String getCompressPath() {
+        return mCompressPath;
+    }
+
+    public void setCompressPath(String mCompressPath) {
+        this.mCompressPath = mCompressPath;
+    }
+
+    public int getHeight() {
+        return mHeight;
+    }
+
+    public void setHeight(int mHeight) {
+        this.mHeight = mHeight;
+    }
+
+    public int getWidth() {
+        return mWidth;
+    }
+
+    public void setWidth(int mWidth) {
+        this.mWidth = mWidth;
+    }
+
+    public MEDIA_TYPE getImageType() {
+        return mImageType;
+    }
+
+    public void setImageType(MEDIA_TYPE mImageType) {
+        this.mImageType = mImageType;
+    }
+
+    public String getMimeType() {
+        return mMimeType;
+    }
+
+    public void setMimeType(String mMimeType) {
+        this.mMimeType = mMimeType;
     }
 }

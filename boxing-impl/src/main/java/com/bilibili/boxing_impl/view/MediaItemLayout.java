@@ -32,9 +32,8 @@ import android.widget.TextView;
 import com.bilibili.boxing.BoxingMediaLoader;
 import com.bilibili.boxing.model.BoxingManager;
 import com.bilibili.boxing.model.entity.BaseMedia;
-import com.bilibili.boxing.model.entity.impl.ImageMedia;
 import com.bilibili.boxing.model.entity.impl.MediaEntity;
-import com.bilibili.boxing.model.entity.impl.VideoMedia;
+import com.bilibili.boxing.utils.MediaUtils;
 import com.bilibili.boxing_impl.BoxingResHelper;
 import com.bilibili.boxing_impl.R;
 import com.bilibili.boxing_impl.WindowManagerHelper;
@@ -126,35 +125,13 @@ public class MediaItemLayout extends FrameLayout {
     }
 
     public void setMedia(BaseMedia media) {
-        if (media instanceof ImageMedia) {
-            ImageMedia imageMedia = (ImageMedia)media;
-            showImageItem(imageMedia);
-        } else if (media instanceof VideoMedia) {
-            VideoMedia videoMedia = (VideoMedia) media;
-            showVideoItem(videoMedia);
-        } else if (media instanceof MediaEntity){
-            MediaEntity mediaEntity = (MediaEntity)media;
-            if (mediaEntity.getMediaType() == MediaEntity.MEDIA_TYPE.VIDEO
-                    || mediaEntity.getMediaType() == MediaEntity.MEDIA_TYPE.GIF){
-                VideoMedia videoMedia = new VideoMedia.Builder(mediaEntity.getId(),mediaEntity.getPath())
-                        .setTitle(mediaEntity.mTitle)
-                        .setMimeType(mediaEntity.mMimeType)
-                        .setSize(String.valueOf(mediaEntity.getSize()))
-                        .setDataTaken(mediaEntity.mDateTaken)
-                        .setDuration(mediaEntity.mDuration)
-                        .build();
-                showVideoItem(videoMedia);
-            }else {
-                ImageMedia imageMedia = new ImageMedia.Builder(mediaEntity.getId(),mediaEntity.getPath())
-                        .setHeight(mediaEntity.mHeight)
-                        .setMimeType(mediaEntity.mMimeType)
-                        .setSelected(mediaEntity.mIsSelected)
-                        .setSize(mediaEntity.getSizeByUnit())
-                        .setThumbnailPath(mediaEntity.mThumbnailPath)
-                        .setWidth(mediaEntity.mWidth)
-                        .build();
-                showImageItem(imageMedia);
-            }
+        MediaEntity mediaEntity = (MediaEntity)media;
+        MediaUtils.MEDIA_TYPE type = mediaEntity.getMediaType();
+        if ( type == MediaUtils.MEDIA_TYPE.GIF ||
+                type == MediaUtils.MEDIA_TYPE.VIDEO ){
+            showVideoItem(mediaEntity);
+        }else if (mediaEntity.getMediaKind() == MediaUtils.MEDIA_TYPE.PHOTO){
+            showImageItem(mediaEntity);
         }
     }
 
@@ -177,11 +154,11 @@ public class MediaItemLayout extends FrameLayout {
         }
     }
 
-    private void showVideoItem(VideoMedia videoMedia){
+    private void showVideoItem(MediaEntity videoMedia){
         mVideoLayout.setVisibility(VISIBLE);
         String path = videoMedia.getPath();
         String duration = videoMedia.getDuration();
-        if (videoMedia.getMediaType() == MediaEntity.MEDIA_TYPE.GIF){
+        if (videoMedia.getMediaType() == MediaUtils.MEDIA_TYPE.GIF){
             path = videoMedia.getPath();
             duration = "GIF";
         }
@@ -192,7 +169,7 @@ public class MediaItemLayout extends FrameLayout {
         setCover(path);
     }
 
-    private void showImageItem(ImageMedia media){
+    private void showImageItem(MediaEntity media){
         mVideoLayout.setVisibility(GONE);
         setCover(media.getThumbnailPath());
     }

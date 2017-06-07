@@ -28,7 +28,6 @@ import android.widget.ImageView;
 import com.bilibili.boxing.model.BoxingManager;
 import com.bilibili.boxing.model.config.BoxingConfig;
 import com.bilibili.boxing.model.entity.BaseMedia;
-import com.bilibili.boxing.model.entity.impl.ImageMedia;
 import com.bilibili.boxing.model.entity.impl.MediaEntity;
 import com.bilibili.boxing.utils.MediaUtils;
 import com.bilibili.boxing_impl.BoxingResHelper;
@@ -107,17 +106,11 @@ public class BoxingMediaAdapter extends RecyclerView.Adapter {
             vh.mItemLayout.setMedia(media);
             vh.mItemChecked.setVisibility(mMultiImageMode ? View.VISIBLE : View.GONE);
             if (mMultiImageMode) {
-                boolean isChecked = false;
-                if (media instanceof ImageMedia) {
-                    isChecked = ((ImageMedia) media).isSelected();
-                }else if (media instanceof MediaEntity){
-                    MediaEntity mediaEntity = ((MediaEntity) media);
-                    isChecked = mediaEntity.mIsSelected;
-                    if (MediaUtils.getMediaTypeFormMimeType(mediaEntity.mMimeType)
-                            == MediaUtils.MEDIA_TYPE.VIDEO){
-                        vh.mItemChecked.setVisibility(View.GONE);
-                        return;
-                    }
+                MediaEntity mediaEntity = (MediaEntity)media;
+                boolean isChecked = mediaEntity.mIsSelected;
+                if (mediaEntity.getMediaKind() == MediaUtils.MEDIA_TYPE.VIDEO){
+                    vh.mItemChecked.setVisibility(View.GONE);
+                    return;
                 }
                 vh.mItemLayout.setChecked(isChecked);
                 vh.mItemChecked.setTag(R.id.media_layout, vh.mItemLayout);

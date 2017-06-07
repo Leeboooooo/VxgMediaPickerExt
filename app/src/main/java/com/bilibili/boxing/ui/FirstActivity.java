@@ -39,9 +39,10 @@ import com.bilibili.boxing.model.BoxingManager;
 import com.bilibili.boxing.model.config.BoxingConfig;
 import com.bilibili.boxing.model.config.BoxingCropOption;
 import com.bilibili.boxing.model.entity.BaseMedia;
-import com.bilibili.boxing.model.entity.impl.ImageMedia;
+import com.bilibili.boxing.model.entity.impl.MediaEntity;
 import com.bilibili.boxing.utils.BoxingFileHelper;
 import com.bilibili.boxing.utils.ImageCompressor;
+import com.bilibili.boxing.utils.MediaUtils;
 import com.bilibili.boxing_impl.ui.BoxingActivity;
 import com.bilibili.boxing_impl.ui.BoxingBottomSheetActivity;
 import com.bilibili.boxing_impl.view.SpacesItemDecoration;
@@ -153,19 +154,18 @@ public class FirstActivity extends AppCompatActivity implements View.OnClickList
                 mAdapter.setList(medias);
             } else if (requestCode == COMPRESS_REQUEST_CODE) {
                 final List<BaseMedia> imageMedias = new ArrayList<>(1);
+                if (medias == null)return;
                 BaseMedia baseMedia = medias.get(0);
-                if (!(baseMedia instanceof ImageMedia)) {
+                MediaEntity mediaEntity = (MediaEntity)baseMedia;
+                if (mediaEntity.getMediaKind()!= MediaUtils.MEDIA_TYPE.PHOTO) {
                     return;
                 }
-
-                final ImageMedia imageMedia = (ImageMedia) baseMedia;
                 // the compress task may need time
-                if (imageMedia.compress(new ImageCompressor(this))) {
-                    imageMedia.removeExif();
-                    imageMedias.add(imageMedia);
+                if (mediaEntity.compress(new ImageCompressor(this))) {
+                    mediaEntity.removeExif();
+                    imageMedias.add(mediaEntity);
                     mAdapter.setList(imageMedias);
                 }
-
             }
         }
     }
@@ -187,7 +187,8 @@ public class FirstActivity extends AppCompatActivity implements View.OnClickList
         }
 
         List<BaseMedia> getMedias() {
-            if (mList == null || mList.size() <= 0 || !(mList.get(0) instanceof ImageMedia)) {
+            if (mList == null || mList.size() <= 0
+                    || !(((MediaEntity)mList.get(0)).getMediaKind() == MediaUtils.MEDIA_TYPE.PHOTO)) {
                 return null;
             }
             return mList;
@@ -208,8 +209,9 @@ public class FirstActivity extends AppCompatActivity implements View.OnClickList
                 mediaViewHolder.mImageView.setImageResource(BoxingManager.getInstance().getBoxingConfig().getMediaPlaceHolderRes());
                 BaseMedia media = mList.get(position);
                 String path;
-                if (media instanceof ImageMedia) {
-                    path = ((ImageMedia) media).getThumbnailPath();
+                MediaEntity mediaEntity = (MediaEntity)media;
+                if (mediaEntity.getMediaKind() == MediaUtils.MEDIA_TYPE.PHOTO){
+                    path = mediaEntity.getThumbnailPath();
                 } else {
                     path = media.getPath();
                 }

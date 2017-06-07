@@ -29,7 +29,7 @@ import com.bilibili.boxing.loader.IBoxingCallback;
 import com.bilibili.boxing.loader.IBoxingMediaLoader;
 import com.bilibili.boxing.model.BoxingManager;
 import com.bilibili.boxing.model.config.BoxingConfig;
-import com.bilibili.boxing.model.entity.impl.VideoMedia;
+import com.bilibili.boxing.model.entity.impl.MediaEntity;
 import com.bilibili.boxing_impl.R;
 
 import org.junit.Before;
@@ -66,7 +66,7 @@ public class MediaItemLayoutTest {
         assertNotNull(layout);
 
         BoxingManager.getInstance().setBoxingConfig(new BoxingConfig(BoxingConfig.Mode.VIDEO).withVideoDurationRes(R.drawable.ic_boxing_broken_image));
-        VideoMedia videoMedia = new VideoMedia.Builder("233", "233").build();
+        MediaEntity videoMedia = new MediaEntity.Builder("233", "233").build();
         layout.setMedia(videoMedia);
         View videoLayout = layout.findViewById(R.id.video_layout);
         assertNotNull(videoLayout);

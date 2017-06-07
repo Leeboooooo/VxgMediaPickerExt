@@ -24,7 +24,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.WorkerThread;
 
 import com.bilibili.boxing.model.callback.IMediaTaskCallback;
-import com.bilibili.boxing.model.entity.impl.VideoMedia;
+import com.bilibili.boxing.model.entity.impl.MediaEntity;
 import com.bilibili.boxing.model.task.IMediaTask;
 import com.bilibili.boxing.utils.BoxingExecutor;
 
@@ -32,12 +32,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A Task to load {@link VideoMedia} in database.
+ * A Task to load {@link MediaEntity} in database.
  *
  * @author ChenSL
  */
 @WorkerThread
-public class VideoTask implements IMediaTask<VideoMedia> {
+public class VideoTask implements IMediaTask<MediaEntity> {
 
     private static String[] MEDIA_COL = new String[]{
             MediaStore.Video.Media.DATA,
@@ -51,12 +51,12 @@ public class VideoTask implements IMediaTask<VideoMedia> {
 
 
     @Override
-    public void load(final ContentResolver cr, final int page, String id, final IMediaTaskCallback<VideoMedia> callback) {
+    public void load(final ContentResolver cr, final int page, String id, final IMediaTaskCallback<MediaEntity> callback) {
         loadVideos(cr, page, callback);
     }
 
-    private void loadVideos(ContentResolver cr, int page, @NonNull final IMediaTaskCallback<VideoMedia> callback) {
-        final List<VideoMedia> videoMedias = new ArrayList<>();
+    private void loadVideos(ContentResolver cr, int page, @NonNull final IMediaTaskCallback<MediaEntity> callback) {
+        final List<MediaEntity> videoMedias = new ArrayList<>();
         final Cursor cursor = cr.query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, MEDIA_COL, null, null,
                 MediaStore.Images.Media.DATE_MODIFIED + " desc" + " LIMIT " + page * IMediaTask.PAGE_LIMIT + " , " + IMediaTask.PAGE_LIMIT);
         try {
@@ -71,7 +71,7 @@ public class VideoTask implements IMediaTask<VideoMedia> {
                     String size = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.SIZE));
                     String date = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DATE_TAKEN));
                     String duration = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DURATION));
-                    VideoMedia video = new VideoMedia.Builder(id, data).setTitle(title).setDuration(duration)
+                    MediaEntity video = new MediaEntity.Builder(id, data).setTitle(title).setDuration(duration)
                             .setSize(size).setDataTaken(date).setMimeType(type).build();
                     videoMedias.add(video);
 
@@ -88,8 +88,8 @@ public class VideoTask implements IMediaTask<VideoMedia> {
 
     }
 
-    private void postMedias(@NonNull final IMediaTaskCallback<VideoMedia> callback,
-                            final List<VideoMedia> videoMedias, final int count) {
+    private void postMedias(@NonNull final IMediaTaskCallback<MediaEntity> callback,
+                            final List<MediaEntity> videoMedias, final int count) {
         BoxingExecutor.getInstance().runUI(new Runnable() {
             @Override
             public void run() {

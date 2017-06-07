@@ -22,7 +22,7 @@ import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.bilibili.boxing.model.entity.impl.ImageMedia;
+import com.bilibili.boxing.model.entity.impl.MediaEntity;
 import com.bilibili.boxing.utils.CameraPickerHelper;
 import com.bilibili.boxing.utils.CompressTask;
 import com.bilibili.boxing.utils.BoxingFileHelper;
@@ -85,10 +85,9 @@ public class PickerUtilTest {
     @Test
     public void testCompressTask() {
         ImageCompressor illegalCompressor = new ImageCompressor(new File("///"));
-        ImageMedia media = new ImageMedia("123", "44");
+        MediaEntity media = new MediaEntity.Builder("123", "44").build();
         ImageCompressor compressor = new ImageCompressor(new File("src/main/res/"));
-        ImageMedia media1 = new ImageMedia("1223", "../boxing-impl/src/main/res/drawable-hdpi/ic_boxing_broken_image.png");
-        media1.setSize("233");
+        MediaEntity media1 = new MediaEntity.Builder("1223", "../boxing-impl/src/main/res/drawable-hdpi/ic_boxing_broken_image.png").build();        media1.setSize("233");
 
         boolean result1 = CompressTask.compress(null, null, 0);
         assertTrue(!result1);

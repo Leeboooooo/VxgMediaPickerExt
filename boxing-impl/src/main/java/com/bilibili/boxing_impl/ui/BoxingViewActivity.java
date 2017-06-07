@@ -36,7 +36,7 @@ import com.bilibili.boxing.AbsBoxingViewActivity;
 import com.bilibili.boxing.Boxing;
 import com.bilibili.boxing.model.BoxingManager;
 import com.bilibili.boxing.model.entity.BaseMedia;
-import com.bilibili.boxing.model.entity.impl.ImageMedia;
+import com.bilibili.boxing.model.entity.impl.MediaEntity;
 import com.bilibili.boxing.model.entity.impl.MediaEntity;
 import com.bilibili.boxing.model.task.IMediaTask;
 import com.bilibili.boxing_impl.BoxingResHelper;
@@ -70,7 +70,7 @@ public class BoxingViewActivity extends AbsBoxingViewActivity {
     private String mAlbumId;
     private Toolbar mToolbar;
     private ImagesAdapter mAdapter;
-    private ImageMedia mCurrentImageItem;
+    private MediaEntity mCurrentImageItem;
     private MediaEntity mCurrentMediaItem;
     private Button mOkBtn;
     private ArrayList<BaseMedia> mImages;
@@ -218,8 +218,8 @@ public class BoxingViewActivity extends AbsBoxingViewActivity {
     public void startLoading() {
         if (!mNeedLoading) {
             BaseMedia media = mSelectedImages.get(mStartPos);
-            if (media instanceof ImageMedia){
-                mCurrentImageItem = (ImageMedia) media;
+            if (media instanceof MediaEntity){
+                mCurrentImageItem = (MediaEntity) media;
             }else if(media instanceof MediaEntity){
                 mCurrentMediaItem = (MediaEntity)media;
             }
@@ -267,7 +267,7 @@ public class BoxingViewActivity extends AbsBoxingViewActivity {
         }
         if (startPos < mImages.size() && !mFinishLoading) {
             mGallery.setCurrentItem(mStartPos, false);
-            mCurrentImageItem = (ImageMedia) mImages.get(startPos);
+            mCurrentImageItem = (MediaEntity) mImages.get(startPos);
             mProgressBar.setVisibility(View.GONE);
             mGallery.setVisibility(View.VISIBLE);
             mFinishLoading = true;
@@ -310,7 +310,7 @@ public class BoxingViewActivity extends AbsBoxingViewActivity {
 
         @Override
         public Fragment getItem(int i) {
-            return BoxingRawImageFragment.newInstance((ImageMedia) mMedias.get(i));
+            return BoxingRawImageFragment.newInstance((MediaEntity) mMedias.get(i));
         }
 
         @Override
@@ -331,7 +331,7 @@ public class BoxingViewActivity extends AbsBoxingViewActivity {
             if (mToolbar != null && position < mImages.size()) {
                 mToolbar.setTitle(getString(R.string.boxing_image_preview_title_fmt, String.valueOf(position + 1)
                         , mNeedLoading ? String.valueOf(mTotalCount) : String.valueOf(mImages.size())));
-                mCurrentImageItem = (ImageMedia) mImages.get(position);
+                mCurrentImageItem = (MediaEntity) mImages.get(position);
                 invalidateOptionsMenu();
             }
         }

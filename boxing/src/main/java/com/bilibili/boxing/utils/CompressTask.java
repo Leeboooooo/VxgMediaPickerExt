@@ -19,7 +19,7 @@ package com.bilibili.boxing.utils;
 
 import android.content.Context;
 
-import com.bilibili.boxing.model.entity.impl.ImageMedia;
+import com.bilibili.boxing.model.entity.impl.MediaEntity;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,15 +28,15 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
 /**
- * A compress task for {@link ImageMedia}
+ * A compress task for {@link MediaEntity}
  * @author ChenSL
  */
 public class CompressTask {
-    public static boolean compress(Context context, final ImageMedia image) {
+    public static boolean compress(Context context, final MediaEntity image) {
         return compress(new ImageCompressor(context), image, ImageCompressor.MAX_LIMIT_SIZE_LONG);
     }
 
-    public static boolean compress(final ImageCompressor imageCompressor, final ImageMedia image, final long maxSize) {
+    public static boolean compress(final ImageCompressor imageCompressor, final MediaEntity image, final long maxSize) {
         if (imageCompressor == null || image == null || maxSize <= 0) {
             return false;
         }

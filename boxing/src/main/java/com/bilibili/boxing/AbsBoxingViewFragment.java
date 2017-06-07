@@ -37,7 +37,7 @@ import com.bilibili.boxing.model.config.BoxingConfig;
 import com.bilibili.boxing.model.config.BoxingCropOption;
 import com.bilibili.boxing.model.entity.AlbumEntity;
 import com.bilibili.boxing.model.entity.BaseMedia;
-import com.bilibili.boxing.model.entity.impl.ImageMedia;
+import com.bilibili.boxing.model.entity.impl.MediaEntity;
 import com.bilibili.boxing.presenter.PickerContract;
 import com.bilibili.boxing.utils.CameraPickerHelper;
 
@@ -416,7 +416,9 @@ public abstract class AbsBoxingViewFragment extends Fragment implements PickerCo
         Uri output = BoxingCrop.getInstance().onCropFinish(resultCode, data);
         if (output != null) {
             List<BaseMedia> medias = new ArrayList<>(1);
-            ImageMedia media = new ImageMedia(String.valueOf(System.currentTimeMillis()), output.getPath());
+            MediaEntity media = new MediaEntity
+                    .Builder(String.valueOf(System.currentTimeMillis()), output.getPath())
+                    .build();
             medias.add(media);
             onFinish(medias);
         }
@@ -462,7 +464,7 @@ public abstract class AbsBoxingViewFragment extends Fragment implements PickerCo
                 onError(helper);
                 return;
             }
-            ImageMedia cameraMedia = new ImageMedia(file);
+            MediaEntity cameraMedia = new MediaEntity(file);
             cameraMedia.saveMediaStore(fragment.getAppCr());
             fragment.onCameraFinish(cameraMedia);
         }

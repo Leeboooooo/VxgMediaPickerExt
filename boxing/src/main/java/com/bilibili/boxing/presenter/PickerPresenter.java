@@ -25,8 +25,9 @@ import com.bilibili.boxing.model.callback.IAlbumTaskCallback;
 import com.bilibili.boxing.model.callback.IMediaTaskCallback;
 import com.bilibili.boxing.model.entity.AlbumEntity;
 import com.bilibili.boxing.model.entity.BaseMedia;
-import com.bilibili.boxing.model.entity.impl.ImageMedia;
+import com.bilibili.boxing.model.entity.impl.MediaEntity;
 import com.bilibili.boxing.model.task.IMediaTask;
+import com.bilibili.boxing.utils.MediaUtils;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -102,14 +103,14 @@ public class PickerPresenter implements PickerContract.Presenter {
                 || selectedMedias == null || selectedMedias.size() == 0) {
             return;
         }
-        Map<String, ImageMedia> map = new HashMap<>(allMedias.size());
+        Map<String, MediaEntity> map = new HashMap<>(allMedias.size());
         for (BaseMedia allMedia : allMedias) {
-            if (!(allMedia instanceof ImageMedia)) {
+            MediaEntity entity = (MediaEntity)allMedia;
+            if (entity.getMediaKind() != MediaUtils.MEDIA_TYPE.PHOTO) {
                 return;
             }
-            ImageMedia media = (ImageMedia) allMedia;
-            media.setSelected(false);
-            map.put(media.getPath(), media);
+            entity.setSelected(false);
+            map.put(entity.getPath(), entity);
         }
         for (BaseMedia media : selectedMedias) {
             if (map.containsKey(media.getPath())) {

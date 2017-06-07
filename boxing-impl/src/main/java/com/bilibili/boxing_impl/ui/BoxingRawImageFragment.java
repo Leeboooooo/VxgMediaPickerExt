@@ -31,7 +31,7 @@ import android.widget.ProgressBar;
 
 import com.bilibili.boxing.AbsBoxingViewActivity;
 import com.bilibili.boxing.loader.IBoxingCallback;
-import com.bilibili.boxing.model.entity.impl.ImageMedia;
+import com.bilibili.boxing.model.entity.impl.MediaEntity;
 import com.bilibili.boxing.utils.BoxingLog;
 import com.bilibili.boxing_impl.R;
 
@@ -53,10 +53,10 @@ public class BoxingRawImageFragment extends BoxingBaseFragment {
 
     private PhotoView mImageView;
     private ProgressBar mProgress;
-    private ImageMedia mMedia;
+    private MediaEntity mMedia;
     private PhotoViewAttacher mAttacher;
 
-    public static BoxingRawImageFragment newInstance(@NonNull ImageMedia image) {
+    public static BoxingRawImageFragment newInstance(@NonNull MediaEntity image) {
         BoxingRawImageFragment fragment = new BoxingRawImageFragment();
         Bundle args = new Bundle();
         args.putParcelable(BUNDLE_IMAGE, image);

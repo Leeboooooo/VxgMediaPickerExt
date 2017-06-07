@@ -24,8 +24,9 @@ import com.bilibili.boxing.model.callback.IAlbumTaskCallback;
 import com.bilibili.boxing.model.config.BoxingConfig;
 import com.bilibili.boxing.model.entity.AlbumEntity;
 import com.bilibili.boxing.model.entity.BaseMedia;
-import com.bilibili.boxing.model.entity.impl.ImageMedia;
-import com.bilibili.boxing.model.entity.impl.VideoMedia;
+import com.bilibili.boxing.model.entity.impl.MediaEntity;
+import com.bilibili.boxing.model.entity.impl.MediaEntity;
+import com.bilibili.boxing.utils.MediaUtils.*;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -75,7 +76,7 @@ public class PickerModuleTest {
 
     @Test
     public void testBaseMedia() {
-        BaseMedia media = new ImageMedia("233", "988");
+        BaseMedia media = new MediaEntity.Builder("233", "988").build();
         assertTrue(media.getId().equals("233"));
         assertTrue(media.getPath().equals("988"));
         media.setSize("99");
@@ -88,7 +89,7 @@ public class PickerModuleTest {
 
     @Test
     public void testImageMedia() {
-        ImageMedia imageMedia = new ImageMedia.Builder("233", "233").build();
+        MediaEntity imageMedia = new MediaEntity.Builder("233", "233").build();
         imageMedia.setPath("/");
         imageMedia.getThumbnailPath();
         String compressPath = imageMedia.getThumbnailPath();
@@ -97,19 +98,19 @@ public class PickerModuleTest {
         String compressPath1 = imageMedia.getThumbnailPath();
         assertEquals(compressPath1, "/");
 
-        imageMedia = new ImageMedia.Builder("233", "233").setThumbnailPath("999").build();
+        imageMedia = new MediaEntity.Builder("233", "233").setThumbnailPath("999").build();
         String compressPath3 = imageMedia.getThumbnailPath();
         assertEquals(compressPath3, "233");
 
         assertEquals(imageMedia.getMimeType(), "image/jpeg");
-        imageMedia.setImageType(ImageMedia.IMAGE_TYPE.GIF);
+        imageMedia.setImageType(MEDIA_TYPE.GIF);
         assertEquals(imageMedia.getMimeType(), "image/gif");
 
     }
 
     @Test
     public void testVideoMedia() {
-        VideoMedia videoMedia = new VideoMedia.Builder("233", "233").build();
+        MediaEntity videoMedia = new MediaEntity.Builder("233", "233").build();
         videoMedia.setDuration("asd");
         String result1 = videoMedia.formatTimeWithMin(0);
         assertEquals(result1, "00:00");
@@ -137,7 +138,7 @@ public class PickerModuleTest {
     
     @Test
     public void testSize() {
-        VideoMedia videoMedia = new VideoMedia.Builder("233", "233").build();
+        MediaEntity videoMedia = new MediaEntity.Builder("233", "233").build();
         videoMedia.setSize("-1");
         String result = videoMedia.getSizeByUnit();
         assertEquals(result, "0K");

@@ -28,7 +28,7 @@ import com.bilibili.boxing.model.BoxingManager;
 import com.bilibili.boxing.model.config.BoxingConfig;
 import com.bilibili.boxing.model.config.BoxingCropOption;
 import com.bilibili.boxing.model.entity.BaseMedia;
-import com.bilibili.boxing.model.entity.impl.ImageMedia;
+import com.bilibili.boxing.model.entity.impl.MediaEntity;
 import com.bilibili.boxing_impl.R;
 import com.bilibili.boxing_impl.ui.BoxingActivity;
 
@@ -121,13 +121,13 @@ public class PickerActivityTest {
         assertEquals(list, null);
 
         Intent intent1 = Boxing.of(new BoxingConfig(BoxingConfig.Mode.MULTI_IMG).needGif()).
-                withIntent(mContext, BoxingActivity.class, new ArrayList<ImageMedia>()).getIntent();
+                withIntent(mContext, BoxingActivity.class, new ArrayList<MediaEntity>()).getIntent();
         assertNotNull(intent1);
         ArrayList<BaseMedia> list1 = intent.getParcelableArrayListExtra(Boxing.EXTRA_SELECTED_MEDIA);
         assertEquals(list1, null);
 
-        ArrayList<ImageMedia> medias = new ArrayList<>();
-        medias.add(new ImageMedia("test", "test"));
+        ArrayList<MediaEntity> medias = new ArrayList<>();
+        medias.add(new MediaEntity.Builder("test", "test").build());
         Intent intent2 = Boxing.of(new BoxingConfig(BoxingConfig.Mode.MULTI_IMG).needGif()).
                 withIntent(mContext, BoxingActivity.class, medias).getIntent();
         assertNotNull(intent2);
@@ -144,9 +144,9 @@ public class PickerActivityTest {
                 .appendPath(String.format(Locale.US, "%s.jpg", System.currentTimeMillis()))
                 .build();
         BoxingCropOption cropOptions = new BoxingCropOption(destUri);
-        ArrayList<ImageMedia> medias = new ArrayList<>();
-        medias.add(new ImageMedia("test", "test"));
-        medias.add(new ImageMedia("test1", "test1"));
+        ArrayList<MediaEntity> medias = new ArrayList<>();
+        medias.add(new MediaEntity.Builder("test", "test").build());
+        medias.add(new MediaEntity.Builder("test1", "test1").build());
         pickerConfig.withCropOption(cropOptions);
 
         Intent intent = Boxing.of(pickerConfig).withIntent(mContext, BoxingActivity.class, medias).getIntent();

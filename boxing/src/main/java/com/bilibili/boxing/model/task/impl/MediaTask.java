@@ -12,13 +12,11 @@ import com.bilibili.boxing.model.BoxingManager;
 import com.bilibili.boxing.model.callback.IMediaTaskCallback;
 import com.bilibili.boxing.model.config.BoxingConfig;
 import com.bilibili.boxing.model.entity.impl.MediaEntity;
-import com.bilibili.boxing.model.entity.impl.VideoMedia;
 import com.bilibili.boxing.model.task.IMediaTask;
 import com.bilibili.boxing.utils.BoxingExecutor;
 import com.bilibili.boxing.utils.BoxingLog;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -202,9 +200,9 @@ public class MediaTask implements IMediaTask<MediaEntity> {
         Comparator<MediaEntity> comparator = new Comparator<MediaEntity>() {
             @Override
             public int compare(MediaEntity o1, MediaEntity o2) {
-                String preModifyDate = o1.getmModifyData();
+                String preModifyDate = o1.getModifyData();
                 if (preModifyDate == null) return 0;
-                String nextModifyDate = o2.getmModifyData();
+                String nextModifyDate = o2.getModifyData();
                 if (nextModifyDate == null) return 0;
                 return nextModifyDate.compareToIgnoreCase(preModifyDate);
             }

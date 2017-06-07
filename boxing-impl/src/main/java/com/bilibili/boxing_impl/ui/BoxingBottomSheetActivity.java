@@ -31,7 +31,7 @@ import com.bilibili.boxing.AbsBoxingActivity;
 import com.bilibili.boxing.AbsBoxingViewFragment;
 import com.bilibili.boxing.BoxingMediaLoader;
 import com.bilibili.boxing.model.entity.BaseMedia;
-import com.bilibili.boxing.model.entity.impl.ImageMedia;
+import com.bilibili.boxing.model.entity.impl.MediaEntity;
 import com.bilibili.boxing_impl.R;
 
 import java.util.ArrayList;
@@ -133,7 +133,7 @@ public class BoxingBottomSheetActivity extends AbsBoxingActivity implements View
     @Override
     public void onBoxingFinish(Intent intent, @Nullable List<BaseMedia> medias) {
         if (mImage != null && medias != null && !medias.isEmpty()) {
-            ImageMedia imageMedia = (ImageMedia) medias.get(0);
+            MediaEntity imageMedia = (MediaEntity) medias.get(0);
             BoxingMediaLoader.getInstance().displayRaw(mImage, imageMedia.getPath(), 1080, 720, null);
         }
         hideBottomSheet();

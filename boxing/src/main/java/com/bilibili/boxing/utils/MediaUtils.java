@@ -8,7 +8,7 @@ import android.text.TextUtils;
 
 public class MediaUtils {
     public enum MEDIA_TYPE {
-        PNG, JPG, GIF,VIDEO
+        PNG,JPG,GIF,VIDEO,MEDIA,PHOTO
     }
 
     public static MEDIA_TYPE getMediaTypeFormMimeType(String mimeType){

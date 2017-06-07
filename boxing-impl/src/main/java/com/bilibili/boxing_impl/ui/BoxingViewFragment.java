@@ -44,9 +44,9 @@ import com.bilibili.boxing.model.BoxingManager;
 import com.bilibili.boxing.model.config.BoxingConfig;
 import com.bilibili.boxing.model.entity.AlbumEntity;
 import com.bilibili.boxing.model.entity.BaseMedia;
-import com.bilibili.boxing.model.entity.impl.ImageMedia;
 import com.bilibili.boxing.model.entity.impl.MediaEntity;
 import com.bilibili.boxing.utils.BoxingFileHelper;
+import com.bilibili.boxing.utils.MediaUtils;
 import com.bilibili.boxing_impl.R;
 import com.bilibili.boxing_impl.WindowManagerHelper;
 import com.bilibili.boxing_impl.adapter.BoxingAlbumAdapter;
@@ -476,54 +476,29 @@ public class BoxingViewFragment extends AbsBoxingViewFragment implements View.On
 
         @Override
         public void onChecked(View view, BaseMedia iMedia) {
-            if (!((iMedia instanceof ImageMedia)|| iMedia instanceof MediaEntity)) {
-                return;
-            }
             boolean isSelected = false;
             MediaItemLayout layout = (MediaItemLayout) view;
             List<BaseMedia> selectedMedias = mMediaAdapter.getSelectedMedias();
-            if (iMedia instanceof ImageMedia) {
-                ImageMedia photoMedia = (ImageMedia) iMedia;
-                isSelected = !photoMedia.isSelected();
-                photoMedia.setSelected(isSelected);
+            MediaEntity mediaEntity = (MediaEntity)iMedia;
+            if(mediaEntity.getMediaKind() == MediaUtils.MEDIA_TYPE.PHOTO){
+                isSelected = !mediaEntity.isSelected();
+                mediaEntity.setSelected(isSelected);
                 if (isSelected) {
                     if (selectedMedias.size() >= mMaxCount) {
                         String warning = getString(R.string.boxing_too_many_picture_fmt, mMaxCount);
                         Toast.makeText(getActivity(), warning, Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    if (!selectedMedias.contains(photoMedia)) {
-                        if (photoMedia.isGifOverSize()) {
+                    if (!selectedMedias.contains(mediaEntity)) {
+                        if (mediaEntity.isGifOverSize()) {
                             Toast.makeText(getActivity(), R.string.boxing_gif_too_big, Toast.LENGTH_SHORT).show();
                             return;
                         }
-                        selectedMedias.add(photoMedia);
+                        selectedMedias.add(mediaEntity);
                     }
                 } else {
-                    if (selectedMedias.size() >= 1 && selectedMedias.contains(photoMedia)) {
-                        selectedMedias.remove(photoMedia);
-                    }
-                }
-            }else{
-                MediaEntity entity = (MediaEntity)iMedia;
-                isSelected = !entity.mIsSelected;
-                entity.mIsSelected = isSelected;
-                if (isSelected) {
-                    if (selectedMedias.size() >= mMaxCount) {
-                        String warning = getString(R.string.boxing_too_many_picture_fmt, mMaxCount);
-                        Toast.makeText(getActivity(), warning, Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    if (!selectedMedias.contains(entity)) {
-                        if (entity.isGifOverSize()) {
-                            Toast.makeText(getActivity(), R.string.boxing_gif_too_big, Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                        selectedMedias.add(entity);
-                    }
-                } else {
-                    if (selectedMedias.size() >= 1 && selectedMedias.contains(entity)) {
-                        selectedMedias.remove(entity);
+                    if (selectedMedias.size() >= 1 && selectedMedias.contains(mediaEntity)) {
+                        selectedMedias.remove(mediaEntity);
                     }
                 }
             }

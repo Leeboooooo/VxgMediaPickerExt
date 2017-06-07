@@ -27,8 +27,8 @@ import com.bilibili.boxing.model.callback.IMediaTaskCallback;
 import com.bilibili.boxing.model.config.BoxingConfig;
 import com.bilibili.boxing.model.entity.AlbumEntity;
 import com.bilibili.boxing.model.entity.BaseMedia;
-import com.bilibili.boxing.model.entity.impl.ImageMedia;
-import com.bilibili.boxing.model.entity.impl.VideoMedia;
+import com.bilibili.boxing.model.entity.impl.MediaEntity;
+import com.bilibili.boxing.model.entity.impl.MediaEntity;
 import com.bilibili.boxing.presenter.PickerContract;
 import com.bilibili.boxing.presenter.PickerPresenter;
 
@@ -99,10 +99,10 @@ public class PickerPresenterTest {
         mPresenter.loadMedias(1, "");
         Mockito.verify(mPickerManager).loadMedia(any(ContentResolver.class),
                 ArgumentCaptor.forClass(Integer.class).capture(), ArgumentCaptor.forClass(String.class).capture(), mLoadMediaCallback.capture());
-        List<VideoMedia> videoMedias = new ArrayList<>();
-        videoMedias.add(new VideoMedia.Builder("1", "test1").build());
-        videoMedias.add(new VideoMedia.Builder("2", "test2").build());
-        videoMedias.add(new VideoMedia.Builder("3", "test3").build());
+        List<MediaEntity> videoMedias = new ArrayList<>();
+        videoMedias.add(new MediaEntity.Builder("1", "test1").build());
+        videoMedias.add(new MediaEntity.Builder("2", "test2").build());
+        videoMedias.add(new MediaEntity.Builder("3", "test3").build());
         mLoadMediaCallback.getValue().postMedia(videoMedias, 3);
 
         ArgumentCaptor<List> showVideoCaptor = ArgumentCaptor.forClass(List.class);
@@ -119,11 +119,11 @@ public class PickerPresenterTest {
         mPresenter.loadMedias(0, "");
         Mockito.verify(mPickerManager).loadMedia(any(ContentResolver.class),
                 ArgumentCaptor.forClass(Integer.class).capture(), ArgumentCaptor.forClass(String.class).capture(), mLoadMediaCallback.capture());
-        List<ImageMedia> imageMedias = new ArrayList<>();
-        imageMedias.add(new ImageMedia.Builder("1", "test1").build());
-        imageMedias.add(new ImageMedia.Builder("2", "test2").build());
-        imageMedias.add(new ImageMedia.Builder("3", "test3").build());
-        imageMedias.add(new ImageMedia.Builder("4", "test4").build());
+        List<MediaEntity> imageMedias = new ArrayList<>();
+        imageMedias.add(new MediaEntity.Builder("1", "test1").build());
+        imageMedias.add(new MediaEntity.Builder("2", "test2").build());
+        imageMedias.add(new MediaEntity.Builder("3", "test3").build());
+        imageMedias.add(new MediaEntity.Builder("4", "test4").build());
         mLoadMediaCallback.getValue().postMedia(imageMedias, 4);
 
         ArgumentCaptor<List> showVideoCaptor = ArgumentCaptor.forClass(List.class);
@@ -153,17 +153,17 @@ public class PickerPresenterTest {
     @Test
     public void checkSelectedMedia() {
         List<BaseMedia> allMedias = new ArrayList<>();
-        allMedias.add(new ImageMedia.Builder("1", "test1").setSelected(true).build());
-        allMedias.add(new ImageMedia.Builder("2", "test2").setSelected(false).build());
-        allMedias.add(new ImageMedia.Builder("3", "test3").build());
+        allMedias.add(new MediaEntity.Builder("1", "test1").setSelected(true).build());
+        allMedias.add(new MediaEntity.Builder("2", "test2").setSelected(false).build());
+        allMedias.add(new MediaEntity.Builder("3", "test3").build());
 
         List<BaseMedia> selectedMedias = new ArrayList<>();
-        selectedMedias.add(new ImageMedia.Builder("2", "test2").setSelected(true).build());
+        selectedMedias.add(new MediaEntity.Builder("2", "test2").setSelected(true).build());
 
         mPresenter.checkSelectedMedia(allMedias, selectedMedias);
-        ImageMedia imageMedia0 = (ImageMedia) allMedias.get(0);
-        ImageMedia imageMedia1 = (ImageMedia) allMedias.get(1);
-        ImageMedia imageMedia2 = (ImageMedia) allMedias.get(2);
+        MediaEntity imageMedia0 = (MediaEntity) allMedias.get(0);
+        MediaEntity imageMedia1 = (MediaEntity) allMedias.get(1);
+        MediaEntity imageMedia2 = (MediaEntity) allMedias.get(2);
         Assert.assertTrue(!imageMedia0.isSelected());
         Assert.assertTrue(imageMedia1.isSelected());
         Assert.assertTrue(!imageMedia2.isSelected());

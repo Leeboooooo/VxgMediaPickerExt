@@ -29,7 +29,8 @@ import android.text.TextUtils;
 import com.bilibili.boxing.model.BoxingManager;
 import com.bilibili.boxing.model.callback.IMediaTaskCallback;
 import com.bilibili.boxing.model.config.BoxingConfig;
-import com.bilibili.boxing.model.entity.impl.ImageMedia;
+import com.bilibili.boxing.model.entity.impl.MediaEntity;
+import com.bilibili.boxing.model.entity.impl.MediaEntity;
 import com.bilibili.boxing.model.task.IMediaTask;
 import com.bilibili.boxing.utils.BoxingExecutor;
 import com.bilibili.boxing.utils.BoxingLog;
@@ -44,7 +45,7 @@ import java.util.Map;
  * @author ChenSL
  */
 @WorkerThread
-public class ImageTask implements IMediaTask<ImageMedia> {
+public class ImageTask implements IMediaTask<MediaEntity> {
     private static final String SELECTION_IMAGE_MIME_TYPE = Images.Media.MIME_TYPE + "=? or " + Images.Media.MIME_TYPE + "=? or " + Images.Media.MIME_TYPE + "=? or " + Images.Media.MIME_TYPE + "=?";
     private static final String SELECTION_IMAGE_MIME_TYPE_WITHOUT_GIF = Images.Media.MIME_TYPE + "=? or " + Images.Media.MIME_TYPE + "=? or " + Images.Media.MIME_TYPE + "=?";
     private static final String SELECTION_ID = Images.Media.BUCKET_ID + "=? and (" + SELECTION_IMAGE_MIME_TYPE + " )";
@@ -61,7 +62,7 @@ public class ImageTask implements IMediaTask<ImageMedia> {
 
     @Override
     public void load(@NonNull final ContentResolver cr, final int page, final String id,
-                     @NonNull final IMediaTaskCallback<ImageMedia> callback) {
+                     @NonNull final IMediaTaskCallback<MediaEntity> callback) {
         buildThumbnail(cr);
         buildAlbumList(cr, id, page, callback);
     }
@@ -90,11 +91,11 @@ public class ImageTask implements IMediaTask<ImageMedia> {
         }
     }
 
-    private List<ImageMedia> buildAlbumList(ContentResolver cr, String bucketId, int page,
-                                            @NonNull final IMediaTaskCallback<ImageMedia> callback) {
-        List<ImageMedia> result = new ArrayList<>();
+    private List<MediaEntity> buildAlbumList(ContentResolver cr, String bucketId, int page,
+                                            @NonNull final IMediaTaskCallback<MediaEntity> callback) {
+        List<MediaEntity> result = new ArrayList<>();
         String columns[] = getColumns();
-//        String columns[] = ImageMedia.getMediaCol();
+//        String columns[] = MediaEntity.getMediaCol();
         Cursor cursor = null;
         try {
             boolean isDefaultAlbum = TextUtils.isEmpty(bucketId);
@@ -117,7 +118,7 @@ public class ImageTask implements IMediaTask<ImageMedia> {
         return result;
     }
 
-    private void addItem(final int allCount, final List<ImageMedia> result, Cursor cursor, @NonNull final IMediaTaskCallback<ImageMedia> callback) {
+    private void addItem(final int allCount, final List<MediaEntity> result, Cursor cursor, @NonNull final IMediaTaskCallback<MediaEntity> callback) {
         if (cursor != null && cursor.moveToFirst()) {
             do {
                 String picPath = cursor.getString(cursor.getColumnIndex(Images.Media.DATA));
@@ -133,7 +134,7 @@ public class ImageTask implements IMediaTask<ImageMedia> {
                         width = cursor.getInt(cursor.getColumnIndex(Images.Media.WIDTH));
                         height = cursor.getInt(cursor.getColumnIndex(Images.Media.HEIGHT));
                     }
-                    ImageMedia imageItem = new ImageMedia.Builder(id, picPath).setThumbnailPath(mThumbnailMap.get(id))
+                    MediaEntity imageItem = new MediaEntity.Builder(id, picPath).setThumbnailPath(mThumbnailMap.get(id))
                             .setSize(size).setMimeType(mimeType).setHeight(height).setWidth(width).build();
                     if (!result.contains(imageItem)) {
                         result.add(imageItem);
@@ -147,7 +148,7 @@ public class ImageTask implements IMediaTask<ImageMedia> {
         clear();
     }
 
-    private void postMedias(final List<ImageMedia> result, final int count, @NonNull final IMediaTaskCallback<ImageMedia> callback) {
+    private void postMedias(final List<MediaEntity> result, final int count, @NonNull final IMediaTaskCallback<MediaEntity> callback) {
         BoxingExecutor.getInstance().runUI(new Runnable() {
             @Override
             public void run() {
