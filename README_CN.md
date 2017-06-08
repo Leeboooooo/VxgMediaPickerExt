@@ -1,6 +1,6 @@
-## boxing
+## vxg boxing
 ---
-基于MVP模式的Android多媒体选择器。[![Build Status](https://travis-ci.org/Bilibili/boxing.svg?branch=master)](https://travis-ci.org/Bilibili/boxing)
+基于MVP模式的Android多媒体选择器boxing的个人改进版。[![Build Status](https://travis-ci.org/Bilibili/boxing.svg?branch=master)](https://travis-ci.org/Bilibili/boxing)
 
 #### boxing Inside: 
 [![bili](screenshot/bili.webp)](https://play.google.com/store/apps/details?id=tv.danmaku.bili)
@@ -12,41 +12,13 @@
 - 支持gif
 - 支持视频选择功能
 - 提供图片压缩
+- ext：支持混合选择视频和图片
 
 ### Download                                                                  
 ---
 核心版本：只包含核心功能。
-实现版本：在核心功能之上添加了实现界面。                                                                                       
-- Maven 
-  ​                                                  
-  核心版本                                                                                                                                            
-```xml
-<dependency>                                                      
-  	<groupId>com.bilibili</groupId>                                    
-  	<artifactId>boxing</artifactId>                                    
-  	<version>0.7.5</version>                                       
-  	<type>pom</type>                                                
-</dependency> 
-```
-实现版本                                                                   
-```xml
-<dependency>                                                          
-  	<groupId>com.bilibili</groupId>                                    
-  	<artifactId>boxing-impl</artifactId>                              
-  	<version>0.7.5</version>                                       
-  	<type>pom</type>                                                  
-</dependency>                                                      
-```
-- Gradle   
-  ​                                                    
-  核心版本                                                                 
-```java                                                                         
-compile 'com.bilibili:boxing:0.7.5'                              
-```
-实现版本                                                                   
-```java                                                                        
-compile 'com.bilibili:boxing-impl:0.7.5'               
-```
+实现版本：在核心功能之上添加了实现界面。     
+暂时不支持jcenter和maven
 
 ### 预览图
 
@@ -67,9 +39,9 @@ BoxingCrop.getInstance().init(new IBoxingCrop());  // 需要实现 IBoxingCrop
 ```
 
 - 构造参数
-  指定模式：图片单选，多选，视频单选，是否支持gif和相机。
+  指定模式：图片单选，多选，视频单选，是否支持gif和相机,图片和视频同时选择。
 ```java
-BoxingConfig config = new BoxingConfig(Mode); // Mode：Mode.SINGLE_IMG, Mode.MULTI_IMG, Mode.VIDEO
+BoxingConfig config = new BoxingConfig(Mode); // Mode：Mode.SINGLE_IMG, Mode.MULTI_IMG, Mode.VIDEO,Mode.Media
 config.needCamera(cameraRes).needGif().withMaxCount(9); // 支持gif，相机，设置最大选图数
 .withMediaPlaceHolderRes(resInt) // 设置默认图片占位图，默认无
 .withAlbumPlaceHolderRes(resInt) // 设置默认相册占位图，默认无
